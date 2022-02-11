@@ -1,9 +1,11 @@
 package com.demidrostovtsev.springdbstarter.service;
 
 import com.demidrostovtsev.springdbstarter.model.Driver;
+import com.demidrostovtsev.springdbstarter.model.DriverDto;
 import com.demidrostovtsev.springdbstarter.repository.DriverRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,12 +16,16 @@ public class DriverService {
     @Autowired
     private DriverRepository driverRepository;
 
+    private DriverConverter driverConverter;
+
     public void create(Driver driver) {
         driverRepository.save(driver);
     }
 
-    public Driver read(String license) {
-        return driverRepository.getById(license);
+    @Transactional
+    public DriverDto read(String license) {
+        Driver driver = driverRepository.getById(license);
+        return driverConverter.fromDriverToDriverDto(driver);
     }
 
     public boolean update(Driver driver, String license) {
@@ -39,7 +45,7 @@ public class DriverService {
         }
     }
 
-    public List<Driver> readAll(){
+    public List<Driver> findAll(){
         return new ArrayList<>(driverRepository.findAll());
     }
 }
