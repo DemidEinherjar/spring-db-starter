@@ -1,0 +1,14 @@
+# Spring Boot
+spring:
+
+  # PostgresSQL DB
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: root
+    password: Qwe12345
+
+  # JPA
+  jpa:
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
