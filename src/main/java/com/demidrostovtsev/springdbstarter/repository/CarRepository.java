@@ -1,6 +1,7 @@
 package com.demidrostovtsev.springdbstarter.repository;
 
 import com.demidrostovtsev.springdbstarter.model.Car;
+import com.demidrostovtsev.springdbstarter.model.CarDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;

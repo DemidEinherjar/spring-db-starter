@@ -2,24 +2,21 @@ package com.demidrostovtsev.springdbstarter.service;
 
 import com.demidrostovtsev.springdbstarter.model.Driver;
 import com.demidrostovtsev.springdbstarter.model.DriverDto;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Component;
 
+@Component
+@RequiredArgsConstructor
 public class DriverConverter {
 
-    public Driver fromDriverDtoToDriver(DriverDto driverDto) {
+    private final ModelMapper modelMapper;
 
-        Driver driver = new Driver();
-        driver.setLicense(driverDto.getLicense());
-        driver.setName(driverDto.getName());
-        driver.setBirthday(driverDto.getBirthday());
-        return driver;
+    public Driver fromDriverDtoToDriver(DriverDto driverDto) {
+        return modelMapper.map(driverDto, Driver.class);
     }
 
     public DriverDto fromDriverToDriverDto(Driver driver) {
-
-        DriverDto driverDto = new DriverDto();
-        driverDto.setLicense(driver.getLicense());
-        driverDto.setName(driver.getName());
-        driverDto.setBirthday(driver.getBirthday());
-        return driverDto;
+        return modelMapper.map(driver, DriverDto.class);
     }
 }

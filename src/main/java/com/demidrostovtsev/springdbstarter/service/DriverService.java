@@ -3,37 +3,40 @@ package com.demidrostovtsev.springdbstarter.service;
 import com.demidrostovtsev.springdbstarter.model.Driver;
 import com.demidrostovtsev.springdbstarter.model.DriverDto;
 import com.demidrostovtsev.springdbstarter.repository.DriverRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class DriverService {
 
-    @Autowired
-    private DriverRepository driverRepository;
+    private final DriverRepository driverRepository;
+    private final DriverConverter driverConverter;
 
-    private DriverConverter driverConverter;
-
-    public void create(Driver driver) {
-        driverRepository.save(driver);
+    public DriverDto create(DriverDto driverDto) {
+        return driverConverter.fromDriverToDriverDto(driverRepository.save(driverConverter.fromDriverDtoToDriver(driverDto)));
     }
 
-    @Transactional
     public DriverDto read(String license) {
-        Driver driver = driverRepository.getById(license);
-        return driverConverter.fromDriverToDriverDto(driver);
+        return driverConverter.fromDriverToDriverDto(driverRepository.findById(license).orElse(new Driver()));
     }
 
-    public boolean update(Driver driver, String license) {
-        if (driverRepository.existsById(license)) {
-            return true;
-        } else {
-            return false;
-        }
+    public DriverDto update(String license, DriverDto driverDto) {
+        Driver driver = driverRepository.findById(license).orElseThrow(()->{
+            return null;
+        });
+        driver.setLicense(driverDto.getLicense());
+        driver.setName(driverDto.getName());
+        driver.setBirthday(driverDto.getBirthday());
+
+        return driverConverter.fromDriverToDriverDto(driverRepository.save(driver));
     }
 
     public boolean delete(String license) {
@@ -45,7 +48,10 @@ public class DriverService {
         }
     }
 
-    public List<Driver> findAll(){
-        return new ArrayList<>(driverRepository.findAll());
+    public List<DriverDto> findAll(){
+        return driverRepository.findAll()
+                .stream()
+                .map(driverConverter::fromDriverToDriverDto)
+                .collect(Collectors.toList());
     }
 }
