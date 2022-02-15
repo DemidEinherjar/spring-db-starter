@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 public class DriverService {
 
     private final DriverRepository driverRepository;
-    private final DriverConverter driverConverter;
     private final ModelMapper modelMapper;
 
     public DriverDto create(DriverDto driverDto) {
