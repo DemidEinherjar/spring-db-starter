@@ -1,7 +1,7 @@
 package com.demidrostovtsev.springdbstarter.service;
 
-import com.demidrostovtsev.springdbstarter.model.Driver;
-import com.demidrostovtsev.springdbstarter.model.DriverDto;
+import com.demidrostovtsev.springdbstarter.model.entity.Driver;
+import com.demidrostovtsev.springdbstarter.model.dto.DriverDto;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
