@@ -1,57 +1,69 @@
 package com.demidrostovtsev.springdbstarter.service;
 
-import com.demidrostovtsev.springdbstarter.model.Driver;
-import com.demidrostovtsev.springdbstarter.model.DriverDto;
+import com.demidrostovtsev.springdbstarter.model.dto.CarDto;
+import com.demidrostovtsev.springdbstarter.model.entity.Car;
+import com.demidrostovtsev.springdbstarter.model.entity.Driver;
+import com.demidrostovtsev.springdbstarter.model.dto.DriverDto;
 import com.demidrostovtsev.springdbstarter.repository.DriverRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class DriverService {
 
     private final DriverRepository driverRepository;
-    private final DriverConverter driverConverter;
+    private final ModelMapper modelMapper;
 
     public DriverDto create(DriverDto driverDto) {
-        return driverConverter.fromDriverToDriverDto(driverRepository.save(driverConverter.fromDriverDtoToDriver(driverDto)));
+        log.debug("DriverService creating new Driver with license : {}", driverDto.getLicense());
+        Driver driver = driverRepository.save(modelMapper.map(driverDto, Driver.class));
+        log.info("New Driver with license : {} added", driver.getLicense());
+        return modelMapper.map(driver, DriverDto.class);
     }
 
     public DriverDto read(String license) {
-        return driverConverter.fromDriverToDriverDto(driverRepository.findById(license).orElse(new Driver()));
+        log.debug("DriverService reading Driver with license : {}", license);
+        Driver driver = driverRepository.findById(license).orElseThrow(() -> {
+            log.error("Driver with license : {} NOT FOUND", license);
+            return null;
+        });
+        log.info("Driver with license : {} found", license);
+        return modelMapper.map(driver, DriverDto.class);
     }
 
     public DriverDto update(String license, DriverDto driverDto) {
+        log.debug("DriverService updating Driver with license : {}", license);
         Driver driver = driverRepository.findById(license).orElseThrow(()->{
+            log.error("Driver with license : {} NOT FOUND", license);
             return null;
         });
         driver.setLicense(driverDto.getLicense());
         driver.setName(driverDto.getName());
         driver.setBirthday(driverDto.getBirthday());
 
-        return driverConverter.fromDriverToDriverDto(driverRepository.save(driver));
+        log.info("Driver with license : {} updated", license);
+        return modelMapper.map(driverRepository.save(driver), DriverDto.class);
     }
 
-    public boolean delete(String license) {
-        if (driverRepository.existsById(license)) {
-            driverRepository.deleteById(license);
-            return true;
-        } else {
-            return false;
-        }
+    public void delete(String license) {
+        log.debug("DriverService deleting Driver with license : {}", license);
+        driverRepository.deleteById(license);
+        log.info("Driver with license : {} deleted", license);
     }
 
-    public List<DriverDto> findAll(){
-        return driverRepository.findAll()
+    public List<DriverDto> findAll(Integer pageNum){
+        log.debug("DriverService reading all Drivers on page {}", pageNum.toString());;
+        return driverRepository.findAll(PageRequest.of(pageNum, 2))
                 .stream()
-                .map(driverConverter::fromDriverToDriverDto)
+                .map(driver -> modelMapper.map(driver, DriverDto.class))
                 .collect(Collectors.toList());
     }
 }

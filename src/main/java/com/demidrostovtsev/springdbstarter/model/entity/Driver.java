@@ -1,4 +1,4 @@
-package com.demidrostovtsev.springdbstarter.model;
+package com.demidrostovtsev.springdbstarter.model.entity;
 
 import lombok.Getter;
 import lombok.Setter;
