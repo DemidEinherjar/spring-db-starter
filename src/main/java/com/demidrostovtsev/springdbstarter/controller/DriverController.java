@@ -49,24 +49,31 @@ public class DriverController {
         return new ResponseEntity<>(driverService.findAll(pageNum), HttpStatus.OK);
     }
 
+    /* 4) получить всех автолюбителей у которых есть машина */
+    @GetMapping(value = "/drivers/with-a-car")
+    public ResponseEntity<List<DriverDto>> findDistinctByCarsIsNotNull() {
+        log.debug("New GET request: get all Driver who have a car");
+        return new ResponseEntity<>(driverService.findDistinctByCarsIsNotNull(), HttpStatus.OK);
+    }
+
     /* 5) получить всех автолюбителей у которых есть машина белого цвет */
     @GetMapping(value = "/drivers/car/color={color}")
     public ResponseEntity<List<DriverDto>> findByCarColor(@PathVariable(name = "color") String color) {
-        log.debug("New GET request: get all Driver who have {} car", color);
+        log.debug("New GET request: get all Driver who have {} a car", color);
         return new ResponseEntity<>(driverService.findByCarsColor(color), HttpStatus.OK);
     }
 
     /* 6) получить всех автолюбителей у которых нет машины */
-    @GetMapping(value = "/drivers/no-car")
+    @GetMapping(value = "/drivers/without-а-car")
     public ResponseEntity<List<DriverDto>> findByCarsIsNull() {
-        log.debug("New GET request: get all Driver who have not car");
+        log.debug("New GET request: get all Driver who have not a car");
         return new ResponseEntity<>(driverService.findByCarsIsNull(), HttpStatus.OK);
     }
 
     /*7) получить всех автолюбителей у которых номер 700 */
     @GetMapping(value = "/drivers/car/srp={pattern}")
     public ResponseEntity<List<DriverDto>> findByCarsSrpContaining(@PathVariable(name = "pattern") String pattern) {
-        log.debug("New GET request: get all Driver who have car with srp {}", pattern);
+        log.debug("New GET request: get all Driver who have a car with srp {}", pattern);
         return new ResponseEntity<>(driverService.findByCarsSrpContaining(pattern), HttpStatus.OK);
     }
 
@@ -75,5 +82,12 @@ public class DriverController {
     public ResponseEntity<List<DriverDto>> findByBirthdayBefore(@PathVariable(name = "age") Integer age) {
         log.debug("New GET request: get all Driver who is older {}", age.toString());
         return new ResponseEntity<>(driverService.findByBirthdayBefore(age), HttpStatus.OK);
+    }
+
+    /* 11) получить всех автолюбителей у которых машины белого и красного цвета */
+    @GetMapping(value = "/drivers/car/colors={colorFilter}")
+    public ResponseEntity<List<DriverDto>> findByCarsColorIn(@PathVariable(name = "colorFilter") String colorFilter) {
+        log.debug("New GET request: get all Driver who have a {} car", colorFilter);
+        return new ResponseEntity<>(driverService.findByCarsColorIn(colorFilter), HttpStatus.OK);
     }
 }
