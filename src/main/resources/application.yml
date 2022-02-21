@@ -23,3 +23,6 @@ logging:
       hibernate:
         SQL: DEBUG
         type: TRACE
+        transaction: DEBUG
+      springframework:
+        transaction: DEBUG
