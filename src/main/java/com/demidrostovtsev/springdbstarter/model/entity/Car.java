@@ -25,8 +25,9 @@ public class Car {
     @Column(name = "srp")
     private String srp;
 
-    @Column(name = "owner")
-    private String owner;
+    @JoinColumn(name = "owner")
+    @ManyToOne
+    private Driver owner;
 
     @Column(name = "yi")
     private Integer yi;
